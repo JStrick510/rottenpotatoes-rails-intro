@@ -9,11 +9,28 @@ class MoviesController < ApplicationController
   def index
   
     @all_ratings = Movie.all_ratings
-    params[:ratings].nil? ? @t_param = @all_ratings : @t_param = params[:ratings].keys
     
-    @movies = Movie.where(rating: @t_param).order(params[:sort_by]) if params[:sort_by] != ''
-    @title_header = (params[:sort_by]=='title') ? 'hilite bg-warning' : ''
-    @release_date_header = (params[:sort_by]=='release_date') ? 'hilite bg-warning' : ''
+    @sort = params[:sort] || session[:sort]
+    session[:ratings] = session[:ratings] || @all_ratings
+    #params[:ratings].nil? ? @t_param = session[:ratings] : @t_param = params[:ratings].keys
+    
+    session[:ratings] = session[:ratings] || {'G'=>'', 'PG'=>'', 'PG-13'=>'', 'R'=>''}
+    @t_param = params[:ratings] || session[:ratings]
+    
+    #params[:ratings].nil? ? @t_param = @all_ratings : @t_param = params[:ratings].keys
+    #@t_param = params[:ratings] || session[:ratings]
+    session[:sort] = @sort
+    session[:ratings] = @t_param
+    
+    @movies = Movie.where(rating: session[:ratings].keys).order(session[:sort])
+    #@movies = Movie.where(rating: session[:ratings].keys).order(params[:sort_by]) if params[:sort_by] != ''
+    @title_header = (params[:sort]=='title') ? 'hilite bg-warning' : ''
+    @release_date_header = (params[:sort]=='release_date') ? 'hilite bg-warning' : ''
+    
+    if(params[:sort].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?))
+      flash.keep
+      redirect_to movies_path(sort: session[:sort], ratings: session[:ratings])
+    end
   end
 
   def new
