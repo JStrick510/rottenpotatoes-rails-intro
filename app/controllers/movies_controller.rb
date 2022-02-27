@@ -8,11 +8,12 @@ class MoviesController < ApplicationController
 
   def index
   
-    #test
+    reset_session
+    
     @all_ratings = Movie.all_ratings
     
     @sort = params[:sort] || session[:sort]
-    session[:ratings] = session[:ratings] || @all_ratings
+    #session[:ratings] = session[:ratings] || @all_ratings
     #params[:ratings].nil? ? @t_param = session[:ratings] : @t_param = params[:ratings].keys
     
     session[:ratings] = session[:ratings] || {'G'=>'', 'PG'=>'', 'PG-13'=>'', 'R'=>''}
