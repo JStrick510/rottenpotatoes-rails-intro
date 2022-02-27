@@ -8,6 +8,7 @@ class MoviesController < ApplicationController
 
   def index
   
+    #test
     @all_ratings = Movie.all_ratings
     
     @sort = params[:sort] || session[:sort]
